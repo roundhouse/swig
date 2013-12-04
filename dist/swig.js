@@ -2176,14 +2176,17 @@ exports.Swig = function (opts) {
    * @private
    */
   this.parseFile = function (pathname, options) {
-    var src;
+    var src,
+      templateTextAccessor;
 
     if (!options) {
       options = {};
     }
 
-    if (options.getTemplateText && typeof options.getTemplateText === "function") {
-      src = options.getTemplateText(pathname, options);
+    templateTextAccessor = options.getTemplateText || (this.options && this.options.getTemplateText);
+
+    if (templateTextAccessor && typeof templateTextAccessor === "function") {
+      src = templateTextAccessor(pathname, options);
     } else {
       pathname = (options.resolveFrom) ? path.resolve(path.dirname(options.resolveFrom), pathname) : pathname;
 
@@ -2256,7 +2259,7 @@ exports.Swig = function (opts) {
         throw new Error('Cannot extend "' + parentName + '" because current template has no filename.');
       }
 
-      if (options.noResolveParents) {
+      if (self.options.noResolveParents) {
         parentFile = parentName;
       } else {
         parentFile = parentFile || options.filename;
@@ -3114,33 +3117,36 @@ var ignore = 'ignore',
  * @param {literal}     [only]    Restricts to <strong>only</strong> passing the <code>with context</code> as local variables–the included template will not be aware of any other local variables in the parent template. For best performance, usage of this option is recommended if possible.
  * @param {literal}     [ignore missing] Will output empty string if not found instead of throwing an error.
  */
- exports.compile = function (compiler, args, content, parents, options) {
-  var file = args.shift(),
+exports.compile = function (compiler, args, content, parents, options) {
+  var i,
+    file = args.shift(),
     onlyIdx = args.indexOf(only),
     onlyCtx = onlyIdx !== -1 ? args.splice(onlyIdx, 1) : false,
     parentFile = args.pop().replace(/\\/g, '\\\\'),
     ignore = args[args.length - 1] === missing ? (args.pop()) : false,
     w = '',
     addl = '{',
-        arg;
-  while (arg = args.shift()) {
-      if (typeof arg === "string") {
-          w = w + arg;
+    arg;
+  while (args.length) {
+    arg = args.shift();
+    if (typeof arg === "string") {
+      w = w + arg;
+    } else {
+      for (i in arg) {
+        if (arg.hasOwnProperty(i)) {
+          addl = addl + " \"" + i + "\": " + arg[i] + ",";
+        }
       }
-      else {
-          for (var i in arg) {
-              addl = addl + " \"" + i + "\": " + arg[i] + ",";
-          }
-      }
+    }
   }
   addl = addl.substring(0, addl.length - 1);
   if (addl) {
-      addl = addl += "}";
-      if (w) {
-          w = "_utils.extend({}, " + w + ',' + addl + ")";
-      } else {
-          w = addl;
-      }
+    addl = addl += "}";
+    if (w) {
+      w = "_utils.extend({}, " + w + ',' + addl + ")";
+    } else {
+      w = addl;
+    }
   }
 
   return (ignore ? '  try {\n' : '') +
@@ -3153,76 +3159,81 @@ var ignore = 'ignore',
 };
 
 exports.parse = function (str, line, parser, types, stack, opts) {
-  var file, w, addl = false, addlCtx = {}, addlKey;
+  var file, w, addl = false,
+    addlCtx = {}, addlKey;
   parser.on(types.STRING, function (token) {
-      if (!file) {
-          file = token.match;
-          this.out.push(file);
-          return;
-      }
-      if (this.prevToken.type === types.ASSIGNMENT) {
-          addlCtx[addlKey] = token.match.match(alreadyWrappedRE) ? token.match.replace(/'/g, '\\\'') : '"' + token.match.replace(/'/g, '\\\'') + '"';
-          return false;
-      }
-      return true;
+    if (!file) {
+      file = token.match;
+      this.out.push(file);
+      return;
+    }
+    if (this.prevToken.type === types.ASSIGNMENT) {
+      addlCtx[addlKey] = token.match.match(alreadyWrappedRE) ? token.match.replace(/'/g, '\\\'') : '"' + token.match.replace(/'/g, '\\\'') + '"';
+      return false;
+    }
+    return true;
   });
 
   parser.on(types.VAR, function (token) {
-      if (!file) {
-          file = token.match;
-          return true;
-      }
-
-      if (!w && token.match === 'with') {
-          w = true;
-          return;
-      }
-
-      if (w && token.match === only && this.prevToken.match !== 'with') {
-          this.out.push(token.match);
-          return;
-      }
-
-      if (token.match === ignore) {
-          return false;
-      }
-
-      if (token.match === missing) {
-          if (this.prevToken.match !== ignore) {
-              throw new Error('Unexpected token "' + missing + '" on line ' + line + '.');
-          }
-          this.out.push(token.match);
-          return false;
-      }
-
-      if (this.prevToken.match === ignore) {
-          throw new Error('Expected "' + missing + '" on line ' + line + ' but found "' + token.match + '".');
-      }
-
-      if (this.prevToken.type === types.ASSIGNMENT) {
-          addlCtx[addlKey] = parser.checkMatch(token.match.split('.'));
-          return false;
-      }
-
-
-      if (w) {
-          addlKey = token.match;
-          return false;
-      }
-
+    if (!file) {
+      file = token.match;
       return true;
+    }
+
+    if (!w && token.match === 'with') {
+      w = true;
+      return;
+    }
+
+    if (w && token.match === only && this.prevToken.match !== 'with') {
+      this.out.push(token.match);
+      return;
+    }
+
+    if (token.match === ignore) {
+      return false;
+    }
+
+    if (token.match === missing) {
+      if (this.prevToken.match !== ignore) {
+        throw new Error('Unexpected token "' + missing + '" on line ' + line + '.');
+      }
+      this.out.push(token.match);
+      return false;
+    }
+
+    if (this.prevToken.match === ignore) {
+      throw new Error('Expected "' + missing + '" on line ' + line + ' but found "' + token.match + '".');
+    }
+
+    if (this.prevToken.type === types.ASSIGNMENT) {
+      addlCtx[addlKey] = parser.checkMatch(token.match.split('.'));
+      return false;
+    }
+
+
+    if (w) {
+      addlKey = token.match;
+      return false;
+    }
+
+    return true;
   });
 
 
   parser.on(types.ASSIGNMENT, function (token) {
-      addl = true;
-      return false;
+    addl = true;
+    return false;
   });
 
   parser.on('end', function () {
-      if (addl) this.out.push(addlCtx);
-      if (addlKey && !addl) this.out.push(parser.checkMatch(addlKey.split('.')));
-      this.out.push(opts.filename || null);
+    if (addl) {
+      this.out.push(addlCtx);
+    }
+    if (addlKey && !addl) {
+      this.out.push(parser.checkMatch(addlKey.split('.')));
+    }
+    this.out.push(opts.filename || null);
   });
 
   return true;
