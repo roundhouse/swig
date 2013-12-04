@@ -2,7 +2,7 @@
   "name": "swig",
   "version": "1.2.0",
   "description": "Paul Armstrong's Swig, with the GNU Makefile replaced with grunt, for cross-platform builds.",
-  "main": ["dist/swig.js","dist/swig.min.js"],
+  "main": "dist/swig.js",
   "keywords": [
     "swig",
     "django"
