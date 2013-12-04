@@ -6,18 +6,18 @@ var swig = require('../../lib/swig'),
 var cases = [
   { input: '{% for a in b %}{{ a }}{% endfor %}', out: '123' },
   { input: '{% for a in [1,2,3] %}{{ a }}{% endfor %}', out: '123' },
-  { input: '{% for a in b %}{{ loop.index }}{% endfor %}', out: '123' },
-  { input: '{% for a in b %}{{ loop.index0 }}{% endfor %}', out: '012' },
-  { input: '{% for a in b %}{{ loop.revindex }}{% endfor %}', out: '321' },
-  { input: '{% for a in b %}{{ loop.revindex0 }}{% endfor %}', out: '210' },
-  { input: '{% for a in b %}{{ loop.key }}{% endfor %}', out: '012' },
-  { input: '{% for a,b in b %}{{ loop.key }}{% endfor %}', out: '012' },
-  { input: '{% for a in b %}{{ loop.first }}, {% endfor %}', out: 'true, false, false, ' },
-  { input: '{% for a in b %}{{ loop.last }}, {% endfor %}', out: 'false, false, true, ' },
+  { input: '{% for a in b %}{{ forloop.index }}{% endfor %}', out: '123' },
+  { input: '{% for a in b %}{{ forloop.index0 }}{% endfor %}', out: '012' },
+  { input: '{% for a in b %}{{ forloop.revindex }}{% endfor %}', out: '321' },
+  { input: '{% for a in b %}{{ forloop.revindex0 }}{% endfor %}', out: '210' },
+  { input: '{% for a in b %}{{ forloop.key }}{% endfor %}', out: '012' },
+  { input: '{% for a,b in b %}{{ forloop.key }}{% endfor %}', out: '012' },
+  { input: '{% for a in b %}{{ forloop.first }}, {% endfor %}', out: 'true, false, false, ' },
+  { input: '{% for a in b %}{{ forloop.last }}, {% endfor %}', out: 'false, false, true, ' },
   { input: '{% for a,b in b %}{{ a }}{{ b }}{% endfor %}', out: '011223' },
   { input: '{% for a, b in c %}{{ b }}{% endfor %}', out: 'applebanana' },
-  { input: '{% for a in c %}{{ loop.index }}{% endfor %}', out: '12' },
-  { input: '{% for a in c %}{{ loop.index }}{% endfor %}', out: '12' },
+  { input: '{% for a in c %}{{ forloop.index }}{% endfor %}', out: '12' },
+  { input: '{% for a in c %}{{ forloop.index }}{% endfor %}', out: '12' },
   { input: '{% for a in d|default(["a"]) %}{{ a }}{% endfor %}', out: 'a' },
 ];
 
@@ -35,7 +35,7 @@ describe('Tag: for', function () {
   });
 
   it('resets loop and vars', function () {
-    expect(swig.render('{% for a, b in c %}{% endfor %}{{ a }}{{ b }}{{ loop }}', { locals: { loop: 'z', a: 'x', b: 'y', c: { d: 'e', f: 'g' }}}))
+    expect(swig.render('{% for a, b in c %}{% endfor %}{{ a }}{{ b }}{{ forloop }}', { locals: { forloop: 'z', a: 'x', b: 'y', c: { d: 'e', f: 'g' }}}))
       .to.equal('xyz');
   });
 
