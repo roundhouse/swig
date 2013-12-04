@@ -1,0 +1,23 @@
+{
+  "name": "swig",
+  "version": "1.2.0",
+  "description": "Paul Armstrong's Swig, with the GNU Makefile replaced with grunt, for cross-platform builds.",
+  "main": ["dist/swig.js","dist/swig.min.js"],
+  "keywords": [
+    "swig",
+    "django"
+  ],
+  "authors": [
+    "James Zetlen"
+  ],
+  "license": "MIT",
+  "homepage": "http://mozu.com",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
