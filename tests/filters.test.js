@@ -119,7 +119,8 @@ var n = new Swig(),
       { c: 'v|e("js")', v: '\\ : backslashes, too', e: '\\u005C : backslashes, too' },
       { c: 'v|e("js")', v: 'and lots of whitespace: \r\n\t\v\f\b', e: 'and lots of whitespace: \\u000D\\u000A\\u0009\\u000B\\u000C\\u0008' },
       { c: 'v|e("js")', v: 'and "special" chars = -1;', e: 'and \\u0022special\\u0022 chars \\u003D \\u002D1\\u003B' },
-      { c: 'v|e', v: ['<p>', '</p>'], e: '&lt;p&gt;,&lt;/p&gt;' }
+      { c: 'v|e', v: ['<p>', '</p>'], e: '&lt;p&gt;,&lt;/p&gt;' },
+      { c: 'v|e', v: null, e: ''}
     ],
     first: [
       { v: [1, 2, 3, 4], e: '1' },
