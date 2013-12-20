@@ -1,6 +1,6 @@
 {
   "name": "swig",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Paul Armstrong's Swig, with the GNU Makefile replaced with grunt, for cross-platform builds.",
   "main": "dist/swig.js",
   "keywords": [
