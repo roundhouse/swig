@@ -1,5 +1,37 @@
+[1.3.2](https://github.com/paularmstrong/swig/tree/v1.3.2) / 2014-01-27
+-----------------------------------------------------------------------
+
+* **Fixed** `for` loop variables on objects. gh-409
+* **Fixed** Misc. IE8 fixes. gh-410
+* **Fixed** `include` files when loaders have base paths. gh-407
+
+[1.3.0](https://github.com/paularmstrong/swig/tree/v1.3.0) / 2014-01-20
+-----------------------------------------------------------------------
+
+* **Changed** Removed official node v0.8.x support
+* **Added** Custom template loader support. gh-377, gh-384, gh-382
+* **Added** Ability to set root path using template loaders. gh-382, gh-293
+* **Added** CLI now accepts custom filter and tag arguments. gh-391
+* **Added** Allow `set` tag to set keys on objects with bracket and dot-notation. gh-388
+* **Added** `groupBy` filter from swig-extras. gh-383
+* **Fixed** `swig.run` `filepath` arg is always optional. gh-402
+* **Fixed** Filters on non-empty functions apply correctly. gh-397
+* **Fixed** Filters applied to functions w/ & w/o dotkeys. gh-365
+* **Fixed** `date` filter `N` option returns correct number. gh-375
+* **Fixed** Ensure getting parent template checks cache if on. gh-378
+
+[1.2.2](https://github.com/paularmstrong/swig/tree/v1.2.2) / 2013-12-02
+-----------------------------------------------------------------------
+
+* **Fixed** CTX var output in imported macros. gh-363
+
+[1.2.1](https://github.com/paularmstrong/swig/tree/v1.2.1) / 2013-12-02
+-----------------------------------------------------------------------
+
+* **Fixed** Scoping for Express. gh-363
+
 [1.2.0](https://github.com/paularmstrong/swig/tree/v1.2.0) / 2013-12-01
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------
 
 * **Added** Filepath parameter can be passed to swig.run to allow extends in-browser. gh-349
 * **Changed** Use local-context first for var lookups. gh-344, gh-347
@@ -10,14 +42,14 @@
 * **Fixed** Fix misc documentation issues. gh-359, gh-358
 
 [1.1.0](https://github.com/paularmstrong/swig/tree/v1.1.0) / 2013-10-02
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------
 
 * **Added** Allow logic in default parsing. gh-326
 * **Fixed** Error when attempting to wrap spaceless tag around macro/function output. gh-336
 * **Fixed** Don't overwrite keys on the locals object. gh-337
 
 [1.0.0](https://github.com/paularmstrong/swig/tree/v1.0.0) / 2013-09-23
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------
 
 * **Fixed** Allow parent and other tags to work correctly nested in other tags. gh-331
 * **Fixed** Prevent lexer from matching partial logic/words in variables. gh-330

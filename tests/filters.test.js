@@ -41,7 +41,8 @@ var n = new Swig(),
       { c: 'v|date("D")', v: d, e: 'Tue' },
       { c: 'v|date("j")', v: d, e: '6' },
       { c: 'v|date("l")', v: d, e: 'Tuesday' },
-      { c: 'v|date("N")', v: d, e: '3' },
+      { c: 'v|date("N")', v: d, e: '2' },
+      { c: 'v|date("N")', v: makeDate(420, 2011, 8, 4), e: '7'},
       { c: 'v|date("S")', v: d, e: 'th' },
       { c: 'v|date("w")', v: d, e: '2' },
       { c: 'v|date("z")', v: d, e: '248' },
@@ -102,7 +103,13 @@ var n = new Swig(),
       { c: 'v|date("S")', v: makeDate(420, 2011, 8, 13), e: 'th' },
       { c: 'v|date("S")', v: makeDate(420, 2011, 8, 21), e: 'st' },
       { c: 'v|date("S")', v: makeDate(420, 2011, 8, 22), e: 'nd' },
-      { c: 'v|date("S")', v: makeDate(420, 2011, 8, 23), e: 'rd' }
+      { c: 'v|date("S")', v: makeDate(420, 2011, 8, 23), e: 'rd' },
+
+      // Escape character
+      { c: 'v|date("\\D")', v: d, e: 'D' },
+      { c: 'v|date("\\t\\e\\s\\t")', v: d, e: 'test' },
+      { c: 'v|date("\\\\D")', v: d, e: '\\Tue' },
+      { c: 'v|date("jS \\o\\f F")', v: makeDate(420, 2012, 6, 4), e: '4th of July' }
     ],
     'default': [
       { c: 'v|default("tacos")', v: 'foo', e: 'foo' },
@@ -110,7 +117,7 @@ var n = new Swig(),
       { c: 'v|default("tacos")', v: '', e: 'tacos' },
       { c: 'v|default("tacos")', v: undefined, e: 'tacos' },
       { c: 'v|default("tacos")', v: null, e: 'tacos' },
-      { c: 'v|default("tacos")', v: false, e: 'tacos' },
+      { c: 'v|default("tacos")', v: false, e: 'tacos' }
     ],
     'escape': [
       { c: 'v|escape', v: '<foo>', e: '&lt;foo&gt;' },
@@ -126,6 +133,10 @@ var n = new Swig(),
       { v: [1, 2, 3, 4], e: '1' },
       { v: '213', e: '2' },
       { v: { foo: 'blah' }, e: 'blah' }
+    ],
+    groupBy: [
+      { c: 'v|groupBy("name")|json', v: [{ 'name': 'a', a: 1 }, { 'name': 'a', a: 2 }, { 'name': 'b', a: 3 }], e: JSON.stringify({a: [{a: 1}, {a: 2}], b: [{a: 3}]}).replace(/"/g, '&quot;') },
+      { c: 'v|groupBy("name")', v: 'foo', e: 'foo' }
     ],
     join: [
       { c: 'v|join("+")', v: [1, 2, 3], e: '1+2+3' },
@@ -262,6 +273,30 @@ describe('Filters:', function () {
     var obj = { a: '<hi>' };
     swig.render('{{ a }}', { locals: { a: obj } });
     expect(obj.a).to.equal('<hi>');
+  });
+
+  it('gh-365: filters applied to functions after dotkey', function () {
+    var locals = {
+      w: {
+        g: function () { return 'foo'; },
+        r: function () { return [1, 2, 3]; }
+      },
+      b: function () { return 'bar'; }
+    };
+    expect(swig.render('{{ w.g("a")|replace("f", w.r().length) }}', { locals: locals })).to.equal('3oo');
+    expect(swig.render('{{ "foo"|replace(w.g("a"), "bar") }}', { locals: locals })).to.equal('bar');
+    expect(swig.render('{{ "3"|replace(w.g("a").length, "bar") }}', { locals: locals })).to.equal('bar');
+    expect(swig.render('{{ "bar"|replace(b("a"), "foo") }}', { locals: locals })).to.equal('foo');
+  });
+
+  it('gh-397: Filter index applied to functions with arguments is one-off', function () {
+    var locals = {
+      r: function () { return [1, 2, 3]; },
+      u: 'Tacos',
+      t: 'L N'
+    };
+
+    expect(swig.render("{{ t|replace('L', r('items').length)|replace('N', u) }}", { locals: locals })).to.equal('3 Tacos');
   });
 
 });

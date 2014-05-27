@@ -7,18 +7,26 @@ var cases = [
   { input: '{% for a in b %}{{ a }}{% endfor %}', out: '123' },
   { input: '{% for a in [1,2,3] %}{{ a }}{% endfor %}', out: '123' },
   { input: '{% for a in b %}{{ forloop.index }}{% endfor %}', out: '123' },
+  { input: '{% for a in c %}{{ forloop.index }}{% endfor %}', out: '12' },
   { input: '{% for a in b %}{{ forloop.index0 }}{% endfor %}', out: '012' },
+  { input: '{% for a in c %}{{ forloop.index0 }}{% endfor %}', out: '01' },
   { input: '{% for a in b %}{{ forloop.revindex }}{% endfor %}', out: '321' },
+  { input: '{% for a in c %}{{ forloop.revindex }}{% endfor %}', out: '21' },
   { input: '{% for a in b %}{{ forloop.revindex0 }}{% endfor %}', out: '210' },
+  { input: '{% for a in c %}{{ forloop.revindex0 }}{% endfor %}', out: '10' },
   { input: '{% for a in b %}{{ forloop.key }}{% endfor %}', out: '012' },
+  { input: '{% for a in c %}{{ forloop.key }}{% endfor %}', out: 'ab' },
   { input: '{% for a,b in b %}{{ forloop.key }}{% endfor %}', out: '012' },
+  { input: '{% for a,b in c %}{{ forloop.key }}{% endfor %}', out: 'ab' },
   { input: '{% for a in b %}{{ forloop.first }}, {% endfor %}', out: 'true, false, false, ' },
   { input: '{% for a in b %}{{ forloop.last }}, {% endfor %}', out: 'false, false, true, ' },
+  { input: '{% for a in c %}{{ forloop.first }}, {% endfor %}', out: 'true, false, ' },
+  { input: '{% for a in c %}{{ forloop.last }}, {% endfor %}', out: 'false, true, ' },
   { input: '{% for a,b in b %}{{ a }}{{ b }}{% endfor %}', out: '011223' },
   { input: '{% for a, b in c %}{{ b }}{% endfor %}', out: 'applebanana' },
-  { input: '{% for a in c %}{{ forloop.index }}{% endfor %}', out: '12' },
-  { input: '{% for a in c %}{{ forloop.index }}{% endfor %}', out: '12' },
   { input: '{% for a in d|default(["a"]) %}{{ a }}{% endfor %}', out: 'a' },
+  { input: '{% for a in q %}hi{% endfor %}', out: '' },
+  { input: '{% for a in b %}{% for d in c %}{% for a in b %}{% endfor %}{% endfor %}{% if forloop.last %}last happens only once{% endif %}{% endfor %}', out: 'last happens only once' }
 ];
 
 describe('Tag: for', function () {

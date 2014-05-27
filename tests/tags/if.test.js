@@ -51,6 +51,12 @@ describe('Tag: if', function () {
     });
   });
 
+  it('requires a conditional', function () {
+    expect(function () {
+      swig.render('{% if %}tacos{% endif %}');
+    }).to.throwError(/No conditional statement provided on line 1\./);
+  });
+
   it('throws on bad logic', function () {
     var baddies = [
       [ '{% if && foo %}{% endif %}', /Unexpected logic "\&\&" on line 1\./ ],

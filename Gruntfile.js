@@ -77,7 +77,7 @@
       mochaTest: {
         test: {
           options: {
-            reporter: 'dot',
+            reporter: 'dot'
           },
           src: ['./tests/**/*.test.js']
         }
@@ -97,7 +97,9 @@
         test: {
           options: {
             reporter: 'Dot',
-            run: true
+            run: true,
+            log: true,
+            logErrors: true
           },
           src: ['browser/test/index.html']
         }

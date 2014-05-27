@@ -13,8 +13,8 @@ function resetOptions() {
 }
 
 describe('version', function () {
-  it('is 1.2.0', function () {
-    expect(swig.version).to.equal('1.2.0');
+  it('is 1.3.2', function () {
+    expect(swig.version).to.equal('1.3.2');
   });
 });
 
@@ -208,19 +208,30 @@ describe('swig.compileFile', function () {
   it('can use callback with errors', function (done) {
     var errorTest = __dirname + '/cases-error/extends-non-existent.test.html';
     expect(swig.compileFile(errorTest, {}, function (err) {
-      expect(err.errno).to.equal(34);
+      expect(err.code).to.equal('ENOENT');
       done();
     }));
   });
 });
 
 describe('swig.renderFile', function () {
+  var test, expectation;
+
+  it('can use callback with errors occurred at the time of rendering', function (done) {
+    var s = new swig.Swig({ loader: swig.loaders.memory({ 'error.html': '{{ foo() }}' }) });
+
+    s.renderFile('error.html', { foo: function () { throw new Error('bunk'); } }, function (err, out) {
+      expect(err.message).to.equal('bunk');
+      done();
+    });
+  });
+
   // The following tests should *not* run in the browser
   if (!fs || !fs.readFileSync) {
     return;
   }
-  var test = __dirname + '/cases/extends_1.test.html',
-    expectation = fs.readFileSync(test.replace('test.html', 'expectation.html'), 'utf8');
+  test = __dirname + '/cases/extends_1.test.html';
+  expectation = fs.readFileSync(test.replace('test.html', 'expectation.html'), 'utf8');
 
   beforeEach(resetOptions);
   afterEach(resetOptions);
@@ -239,8 +250,29 @@ describe('swig.renderFile', function () {
 
   it('can use callbacks with errors', function (done) {
     swig.renderFile(__dirname + '/cases/not-existing', {}, function (err, out) {
-      expect(err.errno).to.equal(34);
+      expect(err.code).to.equal('ENOENT');
       done();
     });
+  });
+
+});
+
+describe('swig.run', function () {
+  var tpl = swig.precompile('Hello {{ foobar }}').tpl;
+  it('runs compiled templates', function () {
+    expect(swig.run(tpl)).to.equal('Hello ');
+    expect(swig.run(tpl, { foobar: 'Tacos'})).to.equal('Hello Tacos');
+  });
+
+  it('does not cache if no filename given', function () {
+    var nSwig = new Swig();
+    nSwig.run(tpl, { foobar: 'Tacos'});
+    expect(Object.keys(nSwig.cache).length).to.equal(0);
+  });
+
+  it('caches if given a filename', function () {
+    var nSwig = new Swig();
+    nSwig.run(tpl, { foobar: 'Tacos'}, 'foo');
+    expect(Object.keys(nSwig.cache).length).to.equal(1);
   });
 });
