@@ -164,7 +164,7 @@ describe('Variables', function () {
     });
 
     it('reserved JS words', function () {
-      _.each(['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with'], function (r) {
+      _.each(['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while'], function (r) {
         expect(function () {
           swig.render('{{ ' + r + ' }}', { filename: r + '.html' });
         }).to.throwError(/Reserved keyword "\w+" attempted to be used as a variable on line 1 in file \w+\.html\./);
