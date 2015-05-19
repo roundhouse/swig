@@ -1,4 +1,4 @@
-/*! Swig v1.3.2 | https://paularmstrong.github.com/swig | @license https://github.com/paularmstrong/swig/blob/master/LICENSE */
+/*! Swig v<%= pkg.version %> | https://paularmstrong.github.com/swig | @license https://github.com/paularmstrong/swig/blob/master/LICENSE */
 /*! DateZ (c) 2011 Tomo Universalis | @license https://github.com/TomoUniversalis/DateZ/blob/master/LISENCE */
 ;(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var swig = require('../lib/swig');
@@ -32,14 +32,15 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 exports.tzOffset = 0;
-exports.DateZ = function () {
-  var members = {
-      'default': ['getUTCDate', 'getUTCDay', 'getUTCFullYear', 'getUTCHours', 'getUTCMilliseconds', 'getUTCMinutes', 'getUTCMonth', 'getUTCSeconds', 'toISOString', 'toGMTString', 'toUTCString', 'valueOf', 'getTime'],
-      z: ['getDate', 'getDay', 'getFullYear', 'getHours', 'getMilliseconds', 'getMinutes', 'getMonth', 'getSeconds', 'getYear', 'toDateString', 'toLocaleDateString', 'toLocaleTimeString']
+exports.DateZ = function (value) {
+    var members = {
+        'default': ['getUTCDate', 'getUTCDay', 'getUTCFullYear', 'getUTCHours', 'getUTCMilliseconds', 'getUTCMinutes', 'getUTCMonth', 'getUTCSeconds', 'toISOString', 'toGMTString', 'toUTCString', 'valueOf', 'getTime'],
+        z: ['getDate', 'getDay', 'getFullYear', 'getHours', 'getMilliseconds', 'getMinutes', 'getMonth', 'getSeconds', 'getYear', 'toDateString', 'toLocaleDateString', 'toLocaleTimeString']
     },
-    d = this;
+      d = this,
+      numericValue = value instanceof Date ? Number(value) / 1000 : Number(value);
 
-  d.date = d.dateZ = (arguments.length > 1) ? new Date(Date.UTC.apply(Date, arguments) + ((new Date()).getTimezoneOffset() * 60000)) : (arguments.length === 1) ? new Date(new Date(arguments['0'])) : new Date();
+  d.date = d.dateZ = (arguments.length > 1) ? new Date(Date.UTC.apply(Date, arguments) + ((new Date()).getTimezoneOffset() * 60000)) : (arguments.length === 1) ? new Date(isNaN(numericValue) ? value : numericValue * 1000) : new Date();
 
   d.timezoneOffset = d.dateZ.getTimezoneOffset();
 
@@ -117,6 +118,14 @@ exports.W = function (input) {
   return 1 + Math.ceil((fThurs - target) / 604800000);
 };
 
+// f    '1','1:30' Time, in 12-hour hours and minutes, with minutes left off if they're zero. Proprietary extension.
+exports.f = function(input) {
+    var minutes = exports.i(input),
+        hours = exports.g(input);
+    if (minutes === "00") return hours;
+    return hours + ':' + minutes;
+}
+
 // Month
 exports.F = function (input) {
   return _months.full[input.getMonth()];
@@ -152,7 +161,7 @@ exports.y = function (input) {
 
 // Time
 exports.a = function (input) {
-  return input.getHours() < 12 ? 'am' : 'pm';
+  return input.getHours() < 12 ? 'a.m.' : 'p.m.';
 };
 exports.A = function (input) {
   return input.getHours() < 12 ? 'AM' : 'PM';
@@ -192,8 +201,11 @@ exports.s = function (input) {
 //e = function () { return ''; },
 //I = function () { return ''; },
 exports.O = function (input) {
-  var tz = input.getTimezoneOffset();
-  return (tz < 0 ? '-' : '+') + (tz / 60 < 10 ? '0' : '') + Math.abs((tz / 60)) + '00';
+    var tz = input.date.getTimezoneOffset();
+    var absTz = Math.abs(tz);
+    var hours = Math.floor(absTz / 60);
+    var minutes = absTz % 60;
+  return (tz < 0 ? '+' : '-') + (hours < 10 ? '0' : '') + hours + ':' + (minutes < 10 ? '0' : '') + minutes;
 };
 //T = function () { return ''; },
 exports.Z = function (input) {
@@ -210,7 +222,6 @@ exports.r = function (input) {
 exports.U = function (input) {
   return input.getTime() / 1000;
 };
-
 },{"./utils":26}],3:[function(require,module,exports){
 var utils = require('./utils'),
   dateFormatter = require('./dateformatter');
@@ -1341,7 +1352,7 @@ var utils = require('./utils'),
   lexer = require('./lexer');
 
 var _t = lexer.types,
-  _reserved = ['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while', 'with'];
+  _reserved = ['break', 'case', 'catch', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'finally', 'for', 'function', 'if', 'in', 'instanceof', 'new', 'return', 'switch', 'this', 'throw', 'try', 'typeof', 'var', 'void', 'while'];
 
 
 /**

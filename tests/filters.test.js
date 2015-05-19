@@ -68,7 +68,7 @@ var n = new Swig(),
       { c: 'v|date("y")', v: d, e: '11' },
 
       // Time
-      { c: 'v|date("a")', v: d, e: 'am' },
+      { c: 'v|date("a")', v: d, e: 'a.m.' },
       { c: 'v|date("A")', v: d, e: 'AM' },
       { c: 'v|date("B")', v: d, e: '712' },
       { c: 'v|date("g")', v: d, e: '9' },
@@ -81,10 +81,10 @@ var n = new Swig(),
       { c: 'v|date("d-m-Y")', v: d, e: '06-09-2011' },
 
       // Timezone
-      { c: 'v|date("O")', v: d, e: '+0700' },
-      { c: 'v|date("O", -120)', v: makeDate(-120, 2011, 0, 2), e: '-0200' },
+      { c: 'v|date("O")', v: d, e: '-05:00' },
+      { c: 'v|date("O", -120)', v: makeDate(-120, 2011, 0, 2), e: '-06:00' },
       { c: 'v|date("Z")', v: d, e: '25200' },
-      { c: 'v|date("O", 360)', v: d, e: '+0600' },
+      { c: 'v|date("O", 360)', v: d, e: '-05:00' },
       { c: 'v|date("G", 320)', v: d, e: '10' },
 
       // Full Date/Time
@@ -109,7 +109,59 @@ var n = new Swig(),
       { c: 'v|date("\\D")', v: d, e: 'D' },
       { c: 'v|date("\\t\\e\\s\\t")', v: d, e: 'test' },
       { c: 'v|date("\\\\D")', v: d, e: '\\Tue' },
-      { c: 'v|date("jS \\o\\f F")', v: makeDate(420, 2012, 6, 4), e: '4th of July' }
+      { c: 'v|date("jS \\o\\f F")', v: makeDate(420, 2012, 6, 4), e: '4th of July' },
+
+
+      // Hypr tests!
+
+      /*
+      AM --  - 'a.m.' or 'p.m.'
+
+02 -- 1430524800|date("d") - Day of the month, 2 digits with leading zeros.
+
+Sat -- 1430524800|date("D") - Day of the week, textual, 3 letters.
+
+Saturday, May 2, 2015 12:00 AM -- 1430524800|date("f") - Time, in 12-hour hours and minutes, with minutes left off if they’re zero. Proprietary extension.
+
+May -- 1430524800|date("F") - Month, textual, long.
+
+12 -- 1430524800|date("g") - Hour, 12-hour format without leading zeros.
+
+0 -- 1430524800|date("G") - Hour, 24-hour format without leading zeros.
+
+12 -- 1430524800|date("h") - Hour, 12-hour format.
+
+00 -- 1430524800|date("H") - Hour, 24-hour format.
+
+00 -- 1430524800|date("i") - Minutes.
+
+2 -- 1430524800|date("j") - Day of the month without leading zeros.
+
+Saturday -- 1430524800|date("l") - Day of the week, textual, long.
+
+05 -- 1430524800|date("m") - Month, 2 digits with leading zeros.
+
+May -- 1430524800|date("M") - Month, textual, 3 letters.
+
+5 -- 1430524800|date("n") - Month without leading zeros.
+
+-05:00 -- 1430524800|date("O") - Difference to Greenwich time in hours.
+
+Sat, 02 May 2015 00:00:00 GMT -- 1430524800|date("r") - RFC 2822 formatted date. 'Thu, 21 Dec 2000 16:01:07 +0200'
+
+00 -- 1430524800|date("s") - Seconds, 2 digits with leading zeros.
+
+12:00 AM -- 1430524800|date("t") - Number of days in the given month.
+
+12:00:00 AM-- 1430524800|date("T") - Time zone of this machine.
+
+Saturday, May 2, 2015 12:00:00 AM -- 1430524800|date("U") - Seconds since the Unix Epoch (January 1 1970 00:00:00 UTC).
+
+YY -- 1430524800|date("y") - Year, 2 digits.
+
+2015 -- 1430524800|date("Y") - Year, 4 digits. */
+
+
     ],
     'default': [
       { c: 'v|default("tacos")', v: 'foo', e: 'foo' },
@@ -233,9 +285,9 @@ describe('Filters:', function () {
 
   it('defaultTZOffset affects date filter', function () {
     swig.setDefaultTZOffset(240);
-    var d = 1316761200000;
+    var d = 1316761200;
     expect(swig.render('{{ v|date("Y-m-d H:i a") }}', { locals: { v: d }}))
-      .to.equal('2011-09-23 03:00 am');
+      .to.equal('2011-09-23 03:00 a.m.');
     swig.setDefaultTZOffset(0);
   });
 
