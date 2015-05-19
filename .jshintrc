@@ -1,0 +1,30 @@
+{
+  "bitwise": true,
+  "browser": false,
+  "debug": false,
+  "devel": false,
+  "es5": false,
+  "evil": true,
+  "forin": false,
+  "indent": 2,
+  "maxerr": 300,
+  "maxlen": 600,
+  "newcap": false,
+  "node": true,
+  "nomen": true,
+  "passfail": false,
+  "plusplus": false,
+  "predef": [
+    "describe",
+    "it",
+    "after",
+    "afterEach",
+    "before",
+    "beforeEach"
+  ],
+  "regexp": true,
+  "rhino": false,
+  "sub": false,
+  "undef": false,
+  "white": false
+}
