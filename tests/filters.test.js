@@ -36,13 +36,14 @@ var n = new Swig(),
       { v: ['foo', 'bar'], e: 'Foo,Bar' }
     ],
     date: [
+
       // Day
       { c: 'v|date("d")', v: d, e: '06' },
       { c: 'v|date("D")', v: d, e: 'Tue' },
       { c: 'v|date("j")', v: d, e: '6' },
       { c: 'v|date("l")', v: d, e: 'Tuesday' },
-      { c: 'v|date("N")', v: d, e: '2' },
-      { c: 'v|date("N")', v: makeDate(420, 2011, 8, 4), e: '7'},
+      { c: 'v|date("N")', v: d, e: 'Sep.' },
+      { c: 'v|date("N")', v: makeDate(420, 2011, 4, 4), e: 'May'},
       { c: 'v|date("S")', v: d, e: 'th' },
       { c: 'v|date("w")', v: d, e: '2' },
       { c: 'v|date("z")', v: d, e: '248' },
@@ -53,10 +54,12 @@ var n = new Swig(),
       { c: 'v|date("W")', v: d, e: '36' },
 
       // Month
+      { c: 'v|date("b")', v: d, e: 'sep' },
       { c: 'v|date("F")', v: d, e: 'September' },
       { c: 'v|date("m")', v: d, e: '09' },
       { c: 'v|date("M")', v: d, e: 'Sep' },
       { c: 'v|date("n")', v: d, e: '9' },
+      { c: 'v|date("N")', v: d, e: 'Sep.' },
       { c: 'v|date("t")', v: d, e: '30' },
 
       // Year
@@ -79,6 +82,12 @@ var n = new Swig(),
       { c: 'v|date("i")', v: d, e: '05' },
       { c: 'v|date("s")', v: d, e: '02' },
       { c: 'v|date("d-m-Y")', v: d, e: '06-09-2011' },
+      { c: 'v|date("f")', v: d, e: '9:05' },
+      { c: 'v|date("f")', v: makeDate(420, 2012, 0, 0, 11, 44), e: '11:44' },
+      { c: 'v|date("P")', v: makeDate(420, 2012, 0, 0, 0), e: 'midnight' },
+      { c: 'v|date("P")', v: makeDate(420, 2012, 0, 0, 12), e: 'noon' },
+      { c: 'v|date("P")', v: makeDate(420, 2012, 0, 0, 11), e: '11 a.m.' },
+      { c: 'v|date("P")', v: makeDate(420, 2012, 0, 0, 23), e: '11 p.m.' },
 
       // Timezone
       { c: 'v|date("O")', v: d, e: '-05:00' },
@@ -86,6 +95,8 @@ var n = new Swig(),
       { c: 'v|date("Z")', v: d, e: '25200' },
       { c: 'v|date("O", 360)', v: d, e: '-05:00' },
       { c: 'v|date("G", 320)', v: d, e: '10' },
+      { c: 'v|date("I")', v: makeDate(480, 2012, 1, 1), e: 'false'},
+      { c: 'v|date("I")', v: makeDate(480, 2012, 6, 1), e: 'true'},
 
       // Full Date/Time
       { c: 'v|date("c")', v: d, e: '2011-09-06T16:05:02.000Z' },
